@@ -26,7 +26,7 @@ export default function Breadcrums({item}) {
                 <div className="product__details__breadcrumb">
                     <Link color="inherit" onClick={() => handleRoute("home")}>Home</Link>
                     {item == "pages" ? 
-                         <span>Pages</span>
+                         <span>Pages of</span>
                     : item == "components" ? 
                         <React.Fragment>
                             <span>Components</span>

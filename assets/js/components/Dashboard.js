@@ -29,12 +29,13 @@ import Pages  from './Pages';
 import Components from './Components';
 import Page  from './Page';
 import Settings from './Settings';
-import { GetUri } from './Helpers'
+import { GetUri, getProjectByUrl } from './Helpers';
 import Issues from './Issues';
 import Breadcrums  from './Breadcrums';
 //import Projects from './Projects';
 import MultiActionAreaCard  from './MultiActionAreaCard';
 import Title from './Title';
+import { Context } from "./Context.js";
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -49,8 +50,9 @@ function Copyright(props) {
 }
 
 const drawerWidth = 240;
-let items = {name :"CMS website", img:'/img/website.jpeg'}
-let items1 = {name :"Wordpress site", img:'/img/wordpress.jpeg'}
+const items = getProjectByUrl('cms_website_one');
+const items1 = getProjectByUrl('cms_website_two');
+const items2 = getProjectByUrl('wordpress');
 
 let args = [];
 const AppBar = styled(MuiAppBar, {
@@ -103,6 +105,7 @@ function DashboardContent() {
  //var siteOpen = false;
   const location = useLocation();
   const [open, setOpen] = React.useState(true);
+  const [site, setSite] = React.useState(null);
   const [siteOpen, setSiteOpen] = React.useState(false);
   const [issueOpen, setIssueOpen] = React.useState(false);
   const [pageOpen, setPageOpen] = React.useState(false);
@@ -111,7 +114,7 @@ function DashboardContent() {
   const [componentOpen, setComponenOpen] = React.useState(false);
   const siteOpenForPage = false;
   const [pageItems, setPageItems] = React.useState(null);
-
+  const [context, setContext] = React.useState("Test");
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -145,7 +148,12 @@ function DashboardContent() {
           setPageOpen(false);
           setSettingsOpen(true);
         }else if(pageUrl.url == "pages"){
+          console.log("pages++++++++++");
+          console.log(pageUrl);
+          const getSite = getProjectByUrl(pageUrl.name);
+          setSite(getSite);
           setPageItems(pageUrl.name);
+         
           setPagesOpen(true);
           setSiteOpen(false);
           setIssueOpen(false);
@@ -158,7 +166,8 @@ function DashboardContent() {
       setPagesOpen(false);
     }
   }, [location]);
-
+  console.log("site++++++++++");
+  console.log(site);
   return (
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: 'flex' }}>
@@ -229,30 +238,34 @@ function DashboardContent() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-         
+            <Context.Provider value={[context, setContext]}> 
             {pagesOpen ? 
               <React.Fragment>
-                  1111<Breadcrums item='pages'/> 
-                  <Pages />
+                  <Breadcrums item='pages'/>
+                  
+                    <Pages site={site}/>
+                  
               </React.Fragment>
             : siteOpen ? 
               <React.Fragment>
-                  2222<Breadcrums item='components'/>
+                  <Breadcrums item='components'/>
                   <Components />
               </React.Fragment>
             : issueOpen ? 
               <React.Fragment>
-                 3333 <Breadcrums item='history'/>
+                 <Breadcrums item='history'/>
                   <Issues />
               </React.Fragment>
             : pageOpen ?
               <React.Fragment>
-                  444<Breadcrums item={pageItems} />
+               
+                  <Breadcrums item={pageItems} />
                   <Page data={pageItems}/>
+                
               </React.Fragment>
             : settingsOpen ?
               <React.Fragment>
-                 555 <Breadcrums item={pageItems} />
+                 <Breadcrums item={pageItems} />
                   <Settings data={pageItems}/>
               </React.Fragment>
             : 
@@ -262,8 +275,9 @@ function DashboardContent() {
                     <Paper sx={{p: 2,height: 400,}}>
                       <Title>Projects</Title>
                       <Grid sx={{p: 2,display: 'flex',justifyContent: 'flex-start',height: 300,}}>
-                        <MultiActionAreaCard item={items} /><MultiActionAreaCard item={items} />
+                        <MultiActionAreaCard item={items} />
                         <MultiActionAreaCard item={items1} />
+                        <MultiActionAreaCard item={items2} />
                       </Grid>
                     </Paper>
                   </Grid>
@@ -285,6 +299,7 @@ function DashboardContent() {
                   </Grid>
             }
             <Copyright sx={{ pt: 4 }} />
+            </Context.Provider>
           </Container>
         </Box>
       </Box>

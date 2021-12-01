@@ -1,29 +1,29 @@
 import * as React from 'react';
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
-import ImageListItemBar from '@mui/material/ImageListItemBar';
-import ListSubheader from '@mui/material/ListSubheader';
-import IconButton from '@mui/material/IconButton';
-import InfoIcon from '@mui/icons-material/Info';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
+
 import CardMedia from '@mui/material/CardMedia';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import Title from './Title';
 import KeepMountedModal from './KeepMountedModal';
 import MultiActionAreaCardSimple from './MultiActionAreaCardSimple'; 
+import Section from './Section';
+import Example from './Example';
+
+import {GetTooltip, GetExample} from './Template'; 
+
 export default function Page({data}) {
   const item = {action:'add', page:'text'}; 
   const item1 = {action:'add', page:'image'};
-  const item2 = {action:'edit', page:'text'}; 
-  const item3 = {action:'add', page:'section'}; 
-  const itemClaims = {action:'claims', page:'page'}; 
-
+  const item2Wel = {action:'example', function:handleOpen, example:'welcome'}; 
+  const item2Test = {action:'example', function:handleOpen, example:'testimonials'}; 
+  const item3 = {action:'add', page:'section', function:handleClick}; 
+  const item4 = {action:'edit', page:'page'};
+  const itemClaims = {action:'claims', page:'4'}; 
+  const itemClaims1 = {action:'claims', page:'2'};
   const itemCard = {type: 'text',name:'welcom text', content: 'Welcom to our site. Our mission to help you to do something...', description:'center of background image'}; 
   const itemCard1 = {type: 'image',name:'welcom image', content: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e', description:'background image of welcom section'};
   
@@ -39,26 +39,92 @@ export default function Page({data}) {
   const mission3 = {type: 'image',name:'Second to feed', content: '/img/portal/60.jpg', description:'our mission image'}
   const mission4 = {type: 'text',name:'Third to entertain', content: 'The main aim of our company adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris ...', description:'right'}
   const mission5 = {type: 'image',name:'Third to entertain', content: '/img/portal/21254.jpg', description:'our mission image'}
+  const title = React.createElement('h1', {}, 'My First React Code');
+  const [newSection, setNewSection] = React.useState(false);
+  const [exampleSectionWelcome, setExampleSectionWelcome] = React.useState(false);
+  const [exampleSectionTestimonials, setExampleSectionTestimonials] = React.useState(false);
+  //alertconst handleOpen = () => setExampleSection(true);
+  const buttons = [
+    <Box className="listHeader" key="one">Example sections:</Box>,
+    <Button key="two"  onClick={() => handleOpen(true, "welcome")}>Welcome</Button>,
+    <Button key="three" onClick={() => handleOpen(true, "testimonials")}>Testimonials</Button>,
+  ];
+  function handleOpen(status, type){
+    if(status == true ){
+      if(type == "welcome"){
+          setExampleSectionWelcome(true)
+          setExampleSectionTestimonials(false)
+      }else{
+          setExampleSectionTestimonials(true)
+          setExampleSectionWelcome(false)
+      }
+    }else{
+      if(type == "welcome"){
+        setTimeout(() => {
+          setExampleSectionWelcome(false);
+        }, 700);
+      }else{
+        setTimeout(() => {
+          setExampleSectionTestimonials(false)
+        }, 700);
+      }
+    }
+  }
+  function handleClick(status){
+   
+      if(status == true ){
+        setNewSection(true);
+      }else{
+        setNewSection(false);
+      }
+  }
+  //setTimeout(newSectionFunc, 5000);
+  //const handleClick = () => alert( "Clicked" );
   return (
     <Grid container>
-      <Grid item xs={12} sx={{ mt: 0, mb: 4 }}>
+      <Grid item xs={12} sx={{ mt: 0, mb: 0 }}>
         <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-           <Grid container  spacing={2}>
+           <Grid container spacing={2}>
               <Grid item xs={6}>
                 <Title>Sections of page: {data}</Title>
+                  {GetTooltip('what_kind_of_section')}
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={3}>
                   <KeepMountedModal item={item3}  />
+                  {GetTooltip('section')}
+              </Grid>
+              <Grid item xs={3}>
+              <ButtonGroup
+                  orientation="vertical"
+                  aria-label="vertical outlined button group"
+                >
+                  {buttons}
+                </ButtonGroup>
+                 
               </Grid>
             </Grid>
         </Paper> 
       </Grid>
-      <Grid item xs={12} className="section">
+      {newSection ?
+        <Section arg={handleClick}/>
+        : 
+        null
+      }
+      {exampleSectionWelcome ?
+          <Example arg={item2Wel}/>
+        :exampleSectionTestimonials  ?
+          <Example arg={item2Test}/>
+        :
+        null
+      }
+      {data != "Home" ?
+      <div>
+      <Grid item xs={12} className="section" sx={{ mt: 4}}>
         <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }} >
            <Grid container  spacing={2}>
               <Grid item xs={6} className="sectionHeader">
                 <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-                  <Title>Section "Welcom"</Title>
+                  <Title>Section "Welcome"</Title>
                   <CardMedia component="img" sx={{ width: 151, pl:1 }} image="/img/portal/approved.png" alt="Live from space album cover" />
                 </Box>
                 <KeepMountedModal item={item} />
@@ -123,7 +189,12 @@ export default function Page({data}) {
         <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
            <Grid container  spacing={2}>
               <Grid item xs={6} className="sectionHeader">
-                <Title>Section "Our Staff"</Title>
+              <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
+                  <Title>Section "Our Staff"</Title>
+                  <Box sx={{pl: 4}}>
+                    <KeepMountedModal item={itemClaims1}  /> 
+                  </Box>
+                </Box>
                 <KeepMountedModal item={item} /> 
               </Grid>
                <Grid item xs={6} className="sectionHeader">
@@ -160,40 +231,9 @@ export default function Page({data}) {
             </Grid>
         </Paper> 
       </Grid>
-      <Grid item xs={12} sx={{ mt: 4, mb: 4 }} >
-        <Grid item xs={12} >
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            <ImageList sx={{ width: 900, height: 650 }}>
-              <ImageListItem key="Subheader" cols={3}>
-                <Title>Pictures of section "Gallery" for page: {data}</Title>
-              </ImageListItem>
-              {itemData.map((item) => (
-                <ImageListItem key={item.img}>
-                  <img
-                    src={`${item.img}?w=248&fit=crop&auto=format`}
-                    srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                    alt={item.title}
-                    loading="lazy"
-                  />
-                  <ImageListItemBar
-                    title={item.title}
-                    subtitle={item.author}
-                    actionIcon={
-                      <IconButton
-                        sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                        aria-label={`info about ${item.title}`}
-                      >
-                        <InfoIcon />
-                      </IconButton>
-                    }
-                  />
-                </ImageListItem>
-              ))}
-            </ImageList>
-            
-          </Paper> 
-        </Grid>
-      </Grid>
+      </div>
+      : null
+      }
     </Grid>
   );
 }
